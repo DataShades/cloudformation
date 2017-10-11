@@ -200,6 +200,7 @@ Parameters:
     MaxLength: '64'
     AllowedPattern: "[a-zA-Z0-9]*"
     ConstraintDescription: Must be 8 - 64 alphanumeric characters.
+    Default: "unUsedPassword123"
   CreateELB:
     Description: An ELB is only necessary in UAT or PROD environments.
     Type: String
@@ -234,6 +235,7 @@ Conditions:
 Resources:
   RDSSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
+    Condition: ProvisionRDS
     Properties:
       DBSubnetGroupDescription:
         Fn::Join:
@@ -277,6 +279,7 @@ Resources:
 
   RDSCNAME:
     Type: AWS::Route53::RecordSet
+    Condition: ProvisionRDS
     DependsOn: RDS
     Properties:
       Type: CNAME
@@ -422,5 +425,6 @@ Resources:
           - DNSName
 Outputs:
   RDSInstance:
+    Condition: ProvisionRDS
     Value: !Ref RDS
     Description: RDS Instance ID
