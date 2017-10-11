@@ -41,43 +41,45 @@ Metadata:
         Parameters:
           - CreateELB
           - CreateASG
-  ParameterLabels:
-    StackVersion:
-      default: "Stack version:"
-    VPC:
-      default: "Stack VPC:"
-    SubnetA:
-      default: "Primary subnet:"
-    SubnetB:
-      default: "Secondary subnet:"
-    AdminSecurityGroup:
-      default: "Admin Security Group:"
-    HostedZoneTLD:
-      default: "Hosted Zone for stack DNS:"
-    CreateHostedZone:
-      default: "Create Hosted Zone?"
-    KeyPair:
-      default: "SSH key pair:"
-    ServiceInstanceType:
-      default: "Services instance type:"
-    ServiceInstanceRootVolumeSize:
-      default: "Services root volume size:"
-    ServiceInstanceDataVolumeSize:
-      default: "Services data volume size:"
-    WebInstanceType:
-      default: "Web instance type:"
-    WebInstanceRootVolumeSize:
-      default: "Web instance root volume size:"
-    CreateRDS:
-      default: "Create RDS?"
-    RDSInstanceType:
-      default: "RDS instance type:"
-    CreateELB:
-      default: "Create Load Balancer?"
-    CreateASG:
-      default: "Create Auto Scaling Group?"
-    CreateEFS:
-      default: "Create Elastic File System mounts?"
+    ParameterLabels:
+      StackVersion:
+        default: "Stack version:"
+      VPC:
+        default: "Stack VPC:"
+      SubnetA:
+        default: "Primary subnet:"
+      SubnetB:
+        default: "Secondary subnet:"
+      AdminSecurityGroup:
+        default: "Admin Security Group:"
+      HostedZoneTLD:
+        default: "Hosted Zone for stack DNS:"
+      CreateHostedZone:
+        default: "Create Hosted Zone?"
+      KeyPair:
+        default: "SSH key pair:"
+      ServicesInstanceType:
+        default: "Services instance type:"
+      ServicesInstanceRootVolumeSize:
+        default: "Services root volume size:"
+      ServicesInstanceDataVolumeSize:
+        default: "Services data volume size:"
+      WebInstanceType:
+        default: "Web instance type:"
+      WebInstanceRootVolumeSize:
+        default: "Web instance root volume size:"
+      CreateRDS:
+        default: "Create RDS?"
+      RDSInstanceType:
+        default: "RDS instance type:"
+      RDSVolumeSize:
+        default: "RDS volume size:"
+      RDSPassword:
+        default: "RDS password:"
+      CreateELB:
+        default: "Create Load Balancer?"
+      CreateASG:
+        default: "Create Auto Scaling Group?"
 Parameters:
   StackVersion:
     Description: The type of stack you're provisioning. Used to define instance names and tags.
