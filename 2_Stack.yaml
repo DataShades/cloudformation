@@ -336,8 +336,8 @@ Resources:
           Value:
             Fn::Join:
             - "_"
-            - !Ref StackVersion
-            - "SERVICES"
+            - - !Ref StackVersion
+              - "SERVICES"
         -
           Key: "StackVersion"
           Value: !Ref StackVersion
@@ -362,8 +362,8 @@ Resources:
           Value: 
             Fn::Join:
               - "_"
-              - !Ref StackVersion
-              - "WEB-MASTER"
+              - - !Ref StackVersion
+                - "WEB-MASTER"
         -
           Key: "StackVersion"
           Value: !Ref StackVersion
