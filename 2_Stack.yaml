@@ -100,7 +100,7 @@ Parameters:
     Description: Select a secondary subnet within chosen VPC.
   AdminSecurityGroup:
     Description: Select existing security group allowing admin access to new instances.
-    Type: AWS::EC2::SecurityGroup::Id
+    Type: List<AWS::EC2::SecurityGroup::Id>
   HostedZoneTLD:
     Description: Route53 hosted zone for stack (e.g. client.links.com.au)
     Type: String
@@ -134,13 +134,13 @@ Parameters:
   ServicesInstanceRootVolumeSize:
     Description: Define size in GB (1-100).
     Type: Number
-    MinValue: 1
+    MinValue: 8
     MaxValue: 100
     Default: 10
   ServicesInstanceDataVolumeSize:
     Description: Define size in GB (1 -1000).
     Type: Number
-    MinValue: 1
+    MinValue: 25
     MaxValue: 1000
     Default: 50
   WebInstanceType:
@@ -161,7 +161,7 @@ Parameters:
   WebInstanceRootVolumeSize:
     Description: Define size in GB (1-100).
     Type: Number
-    MinValue: 1
+    MinValue: 8
     MaxValue: 100
     Default: 10
   CreateRDS:
@@ -215,6 +215,7 @@ Parameters:
     AllowedValues:
       - 'yes'
       - 'no'
+
 Conditions:
   ProvisionHostedZone:
     Fn::Equals:
@@ -232,6 +233,7 @@ Conditions:
     Fn::Equals:
     - 'PROD'
     - !Ref StackVersion
+
 Resources:
   RDSSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -313,7 +315,7 @@ Resources:
     Properties:
       BlockDeviceMappings:
         -
-          DeviceName: "/dev/sda1"
+          DeviceName: "/dev/xvda"
           Ebs:
             VolumeSize: !Ref ServicesInstanceRootVolumeSize
             VolumeType: gp2
@@ -322,7 +324,8 @@ Resources:
           Ebs:
             VolumeSize: !Ref ServicesInstanceDataVolumeSize
             VolumeType: gp2
-      SecurityGroups: !Ref AdminSecurityGroup
+            DeleteOnTermination: "false"
+      SecurityGroupIds: !Ref AdminSecurityGroup
       KeyName: !Ref KeyPair
       ImageId: ami-8536d6e7
       InstanceType: !Ref ServicesInstanceType
@@ -330,40 +333,25 @@ Resources:
       Tags:
         -
           Key: "Name"
-          Value: "Services"
+          Value:
+            Fn::Join:
+            - "_"
+            - !Ref StackVersion
+            - "SERVICES"
         -
           Key: "StackVersion"
           Value: !Ref StackVersion
-#      Volumes: 
-#        -
-#          Device: "/dev/sdf"
-#          VolumeId: !Ref ServicesInstanceDataVolume
   
-#  ServicesInstanceDataVolume:
-#    Type: AWS::EC2::Volume
-#    DeletionPolicy: Snapshot
-#    Properties:
-#      AvailabilityZone:
-#        Fn::GetAtt:
-#        - !Ref SubnetA
-#        - AvailablityZone
-#      Size: !Ref ServicesInstanceDataVolumeSize
-#      Tags:
-#        -
-#          Key: "Name"
-#          Value: "Services_data"
-#      VolumeType: gp2
-
   WebInstance:
     Type: AWS::EC2::Instance
     Properties:
       BlockDeviceMappings:
         -
-          DeviceName: "/dev/sda1"
+          DeviceName: "/dev/xvda"
           Ebs:
             VolumeSize: !Ref WebInstanceRootVolumeSize
             VolumeType: gp2
-      SecurityGroups: !Ref AdminSecurityGroup
+      SecurityGroupIds: !Ref AdminSecurityGroup
       KeyName: !Ref KeyPair
       ImageId: ami-8536d6e7
       InstanceType: !Ref WebInstanceType
@@ -371,7 +359,14 @@ Resources:
       Tags:
         -
           Key: "Name"
-          Value: "Services"
+          Value: 
+            Fn::Join:
+              - "_"
+              - !Ref StackVersion
+              - "WEB-MASTER"
+        -
+          Key: "StackVersion"
+          Value: !Ref StackVersion
 
   CKANELB:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
