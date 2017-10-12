@@ -341,6 +341,9 @@ Resources:
         -
           Key: "StackVersion"
           Value: !Ref StackVersion
+        -
+          Key: "HostedZone"
+          Value: !Ref HostedZoneTLD
   
   WebInstance:
     Type: AWS::EC2::Instance
@@ -367,6 +370,9 @@ Resources:
         -
           Key: "StackVersion"
           Value: !Ref StackVersion
+        -
+          Key: "HostedZone"
+          Value: !Ref HostedZoneTLD
 
   CKANELB:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
