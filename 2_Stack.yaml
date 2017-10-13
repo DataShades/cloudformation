@@ -100,7 +100,7 @@ Parameters:
     Description: Select a secondary subnet within chosen VPC.
   AdminSecurityGroup:
     Description: Select existing security group allowing admin access to new instances.
-    Type: List<AWS::EC2::SecurityGroup::Id>
+    Type: AWS::EC2::SecurityGroup::Id
   HostedZoneTLD:
     Description: Route53 hosted zone for stack (e.g. client.links.com.au)
     Type: String
@@ -326,7 +326,8 @@ Resources:
             VolumeSize: !Ref ServicesInstanceDataVolumeSize
             VolumeType: gp2
             DeleteOnTermination: "false"
-      SecurityGroupIds: !Ref AdminSecurityGroup
+      SecurityGroupIds: 
+        - !Ref AdminSecurityGroup
       KeyName: !Ref KeyPair
       ImageId: ami-8536d6e7
       InstanceType: !Ref ServicesInstanceType
@@ -355,7 +356,8 @@ Resources:
           Ebs:
             VolumeSize: !Ref WebInstanceRootVolumeSize
             VolumeType: gp2
-      SecurityGroupIds: !Ref AdminSecurityGroup
+      SecurityGroupIds: 
+        - !Ref AdminSecurityGroup
       KeyName: !Ref KeyPair
       ImageId: ami-8536d6e7
       InstanceType: !Ref WebInstanceType
