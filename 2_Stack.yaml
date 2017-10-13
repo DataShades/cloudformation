@@ -298,9 +298,10 @@ Resources:
         - - !Ref HostedZoneTLD
           - "."
       ResourceRecords:
-        Fn::GetAtt:
-        - RDS
-        - Endpoint.Address
+        -
+          Fn::GetAtt:
+          - RDS
+          - Endpoint.Address
 
   HostedZone:
     Type: AWS::Route53::HostedZone
