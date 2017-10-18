@@ -393,11 +393,13 @@ Resources:
         Interval: '30'
         Timeout: '20'
       Listeners:
-        InstancePort: '80'
-        LoadBalancerPort: '80'
-        Protocol: HTTP
+        - 
+          InstancePort: '80'
+          LoadBalancerPort: '80'
+          Protocol: HTTP
       Scheme: internet-facing
-      SecurityGroups: !Ref AdminSecurityGroup
+      SecurityGroups: 
+        - !Ref AdminSecurityGroup
       Subnets:
         - !Ref SubnetA
         - !Ref SubnetB
