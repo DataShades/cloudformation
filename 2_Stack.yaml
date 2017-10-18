@@ -40,7 +40,6 @@ Metadata:
           default: "Other infrastructure"
         Parameters:
           - CreateELB
-          - CreateASG
     ParameterLabels:
       StackVersion:
         default: "Stack version:"
@@ -78,8 +77,6 @@ Metadata:
         default: "RDS password:"
       CreateELB:
         default: "Create Load Balancer?"
-      CreateASG:
-        default: "Create Auto Scaling Group?"
 Parameters:
   StackVersion:
     Description: The type of stack you're provisioning. Used to define instance names and tags.
@@ -203,13 +200,6 @@ Parameters:
     Default: "unUsedPassword123"
   CreateELB:
     Description: An ELB is only necessary in UAT or PROD environments.
-    Type: String
-    Default: 'no'
-    AllowedValues:
-      - 'yes'
-      - 'no'
-  CreateASG:
-    Description: An ASG is only necessary in PROD environments.
     Type: String
     Default: 'no'
     AllowedValues:
@@ -429,6 +419,7 @@ Resources:
           Fn::GetAtt: 
           - CKANELB
           - DNSName
+
 Outputs:
   RDSInstance:
     Condition: ProvisionRDS
