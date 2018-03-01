@@ -40,6 +40,7 @@ Metadata:
           default: "Other infrastructure"
         Parameters:
           - CreateELB
+          - CreateEFS
     ParameterLabels:
       StackVersion:
         default: "Stack version:"
@@ -77,6 +78,8 @@ Metadata:
         default: "RDS password:"
       CreateELB:
         default: "Create Load Balancer?"
+      CreateEFS:
+        default: "Create EFS volume?"
 Parameters:
   StackVersion:
     Description: The type of stack you're provisioning. Used to define instance names and tags.
@@ -205,16 +208,19 @@ Parameters:
     AllowedValues:
       - 'yes'
       - 'no'
+  CreateEFS:
+    Description: You can utilise an EFS volume to add redundancy.
+    Type: String
+    Default: 'no'
+    AllowedValues:
+      - 'yes'
+      - 'no'
 
 Conditions:
   ProvisionHostedZone:
     Fn::Equals:
       - 'yes'
       - !Ref CreateHostedZone
-  ProvisionELB:
-    Fn::Equals:
-      - 'yes'
-      - !Ref CreateELB
   ProvisionRDS:
     Fn::Equals:
       - 'yes'
@@ -223,6 +229,14 @@ Conditions:
     Fn::Equals:
     - 'PROD'
     - !Ref StackVersion
+  ProvisionELB:
+    Fn::Equals:
+      - 'yes'
+      - !Ref CreateELB
+  ProvisionEFS:
+    Fn::Equals:
+      - 'yes'
+      - !Ref CreateEFS
 
 Resources:
   RDSSubnetGroup:
@@ -327,7 +341,7 @@ Resources:
           Key: "Name"
           Value:
             Fn::Join:
-            - "_"
+            - "-"
             - - !Ref StackVersion
               - "SERVICES"
         -
@@ -336,6 +350,17 @@ Resources:
         -
           Key: "HostedZone"
           Value: !Ref HostedZoneTLD
+        -
+          Key: "InstanceType"
+          Value: "SERVICES"
+        -
+          Key: "EFS-ID"
+          Value:
+            !If [ProvisionEFS, !Ref EFSVolume, "NA"]
+        -
+          Key: "RDS-ID"
+          Value:
+            !If [ProvisionRDS, !Ref RDS, "NA"]
   
   WebInstance:
     Type: AWS::EC2::Instance
@@ -357,7 +382,7 @@ Resources:
           Key: "Name"
           Value: 
             Fn::Join:
-              - "_"
+              - "-"
               - - !Ref StackVersion
                 - "WEB-MASTER"
         -
@@ -366,6 +391,17 @@ Resources:
         -
           Key: "HostedZone"
           Value: !Ref HostedZoneTLD
+        -
+          Key: "InstanceType"
+          Value: "WEB"
+        -
+          Key: "EFS-ID"
+          Value:
+            !If [ProvisionEFS, !Ref EFSVolume, "NA"]
+        -
+          Key: "RDS-ID"
+          Value:
+            !If [ProvisionRDS, !Ref RDS, "NA"]
 
   CKANELB:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
@@ -419,9 +455,18 @@ Resources:
           Fn::GetAtt: 
           - CKANELB
           - DNSName
+          
+  EFSVolume:
+    Condition: ProvisionEFS
+    Type: AWS::EFS::FileSystem
 
 Outputs:
   RDSInstance:
     Condition: ProvisionRDS
     Value: !Ref RDS
-    Description: RDS Instance ID
+    Description: RDS instance ID
+  
+  EFSVolume:
+    Condition: ProvisionEFS
+    Value: !Ref EFSVolume
+    Description: EFS volume ID
