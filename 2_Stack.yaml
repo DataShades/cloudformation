@@ -315,6 +315,24 @@ Resources:
         Comment: TLD for Datashades stack
       Name: !Ref HostedZoneTLD
 
+  ServicesInstanceDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: "provision-services"
+      HostedZoneName: !Ref HostedZoneTLD
+      Type: CNAME
+      TTL: 60
+      ResourceRecords: !GetAtt ServicesInstance.PublicDnsName
+
+  WebInstanceDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: "provision-webmaster"
+      HostedZoneName: !Ref HostedZoneTLD
+      Type: CNAME
+      TTL: 60
+      ResourceRecords: !GetAtt WebInstance.PublicDnsName
+
   ServicesInstance:
     Type: AWS::EC2::Instance
     Properties:
