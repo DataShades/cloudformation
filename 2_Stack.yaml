@@ -333,7 +333,7 @@ Resources:
       SecurityGroupIds: 
         - !Ref AdminSecurityGroup
       KeyName: !Ref KeyPair
-      ImageId: ami-8536d6e7
+      ImageId: ami-423bec20
       InstanceType: !Ref ServicesInstanceType
       SubnetId: !Ref SubnetA
       Tags:
@@ -374,7 +374,7 @@ Resources:
       SecurityGroupIds: 
         - !Ref AdminSecurityGroup
       KeyName: !Ref KeyPair
-      ImageId: ami-8536d6e7
+      ImageId: ami-423bec20
       InstanceType: !Ref WebInstanceType
       SubnetId: !Ref SubnetB
       Tags:
