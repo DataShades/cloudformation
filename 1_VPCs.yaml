@@ -413,7 +413,7 @@ Resources:
     Condition: DevAZ2
     Type: AWS::EC2::Subnet
     Properties:
-      MapPublicIpOnLaunch: 'yes'
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '1'
