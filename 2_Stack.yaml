@@ -325,7 +325,7 @@ Resources:
       ResourceRecords: 
         - !GetAtt ServicesInstance.PublicDnsName
     DependsOn:
-      - !Ref HostedZone
+      - HostedZone
       - ServicesInstance
 
   WebInstanceDNSRecord:
@@ -338,7 +338,7 @@ Resources:
       ResourceRecords: 
         - !GetAtt WebInstance.PublicDnsName
     DependsOn:
-      - !Ref HostedZone
+      - HostedZone
       - ServicesInstance
 
   ServicesInstance:
@@ -383,7 +383,7 @@ Resources:
         -
           Key: "ZoneID"
           Value:
-            !If [ProvisionHostedZone, !Ref HostedZone, "Update Me..."]
+            !If [ProvisionHostedZone, !Ref HostedZone, "NA"]
         -
           Key: "InstanceType"
           Value: "SERVICES"
@@ -432,7 +432,7 @@ Resources:
         -
           Key: "ZoneID"
           Value:
-            !If [ProvisionHostedZone, !Ref HostedZone, "Update Me..."]
+            !If [ProvisionHostedZone, !Ref HostedZone, "NA"]
         -
           Key: "InstanceType"
           Value: "WEB"
