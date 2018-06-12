@@ -316,6 +316,9 @@ Resources:
       Name: !Ref HostedZoneTLD
 
   ServicesInstanceDNSRecord:
+    DependsOn:
+      - HostedZone
+      - ServicesInstance
     Type: AWS::Route53::RecordSet
     Properties:
       Name: "provision-services"
@@ -326,6 +329,9 @@ Resources:
         - !GetAtt ServicesInstance.PublicDnsName
 
   WebInstanceDNSRecord:
+    DependsOn:
+      - HostedZone
+      - WebInstance
     Type: AWS::Route53::RecordSet
     Properties:
       Name: "provision-webmaster"
