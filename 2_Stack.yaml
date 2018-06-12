@@ -325,7 +325,7 @@ Resources:
       ResourceRecords: 
         - !GetAtt ServicesInstance.PublicDnsName
     DependsOn:
-      - HostedZone
+      - !Ref HostedZone
       - ServicesInstance
 
   WebInstanceDNSRecord:
@@ -338,7 +338,7 @@ Resources:
       ResourceRecords: 
         - !GetAtt WebInstance.PublicDnsName
     DependsOn:
-      - HostedZone
+      - !Ref HostedZone
       - ServicesInstance
 
   ServicesInstance:
