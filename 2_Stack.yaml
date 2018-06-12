@@ -307,7 +307,7 @@ Resources:
           - RDS
           - Endpoint.Address
 
-  R53HostedZone:
+  HostedZone:
     Type: AWS::Route53::HostedZone
     Condition: ProvisionHostedZone
     Properties:
@@ -325,7 +325,8 @@ Resources:
       ResourceRecords: 
         - !GetAtt ServicesInstance.PublicDnsName
     DependsOn:
-      - R53HostedZone
+      - !Ref HostedZone
+      - ServicesInstance
 
   WebInstanceDNSRecord:
     Type: AWS::Route53::RecordSet
@@ -337,7 +338,8 @@ Resources:
       ResourceRecords: 
         - !GetAtt WebInstance.PublicDnsName
     DependsOn:
-      - R53HostedZone
+      - !Ref HostedZone
+      - ServicesInstance
 
   ServicesInstance:
     Type: AWS::EC2::Instance
@@ -381,7 +383,7 @@ Resources:
         -
           Key: "ZoneID"
           Value:
-            !If [ProvisionHostedZone, !Ref R53HostedZone, "NA"]
+            !If [ProvisionHostedZone, !Ref HostedZone, "Update Me..."]
         -
           Key: "InstanceType"
           Value: "SERVICES"
@@ -430,7 +432,7 @@ Resources:
         -
           Key: "ZoneID"
           Value:
-            !If [ProvisionHostedZone, !Ref R53HostedZone, "NA"]
+            !If [ProvisionHostedZone, !Ref HostedZone, "Update Me..."]
         -
           Key: "InstanceType"
           Value: "WEB"
