@@ -322,7 +322,8 @@ Resources:
       HostedZoneName: !Ref HostedZoneTLD
       Type: CNAME
       TTL: 60
-      ResourceRecords: !GetAtt ServicesInstance.PublicDnsName
+      ResourceRecords: 
+        - !GetAtt ServicesInstance.PublicDnsName
 
   WebInstanceDNSRecord:
     Type: AWS::Route53::RecordSet
@@ -331,7 +332,8 @@ Resources:
       HostedZoneName: !Ref HostedZoneTLD
       Type: CNAME
       TTL: 60
-      ResourceRecords: !GetAtt WebInstance.PublicDnsName
+      ResourceRecords: 
+        - !GetAtt WebInstance.PublicDnsName
 
   ServicesInstance:
     Type: AWS::EC2::Instance
