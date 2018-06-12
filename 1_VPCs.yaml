@@ -380,6 +380,7 @@ Resources:
     Condition: BuildDev
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '0'
@@ -412,6 +413,7 @@ Resources:
     Condition: DevAZ2
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'yes'
       CidrBlock:
         Fn::Select:
         - '1'
@@ -444,6 +446,7 @@ Resources:
     Condition: DevAZ3
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '2'
@@ -606,6 +609,7 @@ Resources:
     Condition: BuildUAT
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '0'
@@ -638,6 +642,7 @@ Resources:
     Condition: UATAZ2
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '1'
@@ -670,6 +675,7 @@ Resources:
     Condition: UATAZ3
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '2'
@@ -832,6 +838,7 @@ Resources:
     Condition: BuildProd
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '0'
@@ -864,6 +871,7 @@ Resources:
     Condition: ProdAZ2
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '1'
@@ -896,6 +904,7 @@ Resources:
     Condition: ProdAZ3
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: 'true'
       CidrBlock:
         Fn::Select:
         - '2'
