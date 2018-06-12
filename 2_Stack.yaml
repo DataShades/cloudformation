@@ -345,11 +345,19 @@ Resources:
             - - !Ref StackVersion
               - "SERVICES"
         -
-          Key: "StackVersion"
-          Value: !Ref StackVersion
+          Key: "StackName"
+          Value: 
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "CKAN"
         -
           Key: "HostedZone"
           Value: !Ref HostedZoneTLD
+        -
+          Key: "ZoneID"
+          Value:
+            !If [ProvisionHostedZone, !Ref HostedZone, "Update Me..."]
         -
           Key: "InstanceType"
           Value: "SERVICES"
@@ -386,11 +394,19 @@ Resources:
               - - !Ref StackVersion
                 - "WEB-MASTER"
         -
-          Key: "StackVersion"
-          Value: !Ref StackVersion
+          Key: "StackName"
+          Value:
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "CKAN"
         -
           Key: "HostedZone"
           Value: !Ref HostedZoneTLD
+        -
+          Key: "ZoneID"
+          Value:
+            !If [ProvisionHostedZone, !Ref HostedZone, "Update Me..."]
         -
           Key: "InstanceType"
           Value: "WEB"
