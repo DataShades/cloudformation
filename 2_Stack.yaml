@@ -325,7 +325,10 @@ Resources:
       ResourceRecords: 
         - !GetAtt ServicesInstance.PublicDnsName
     DependsOn:
-      - HostedZone
+      Fn::If:
+        - ProvisionHostedZone
+        - HostedZone
+        - ''
       - ServicesInstance
 
   WebInstanceDNSRecord:
@@ -338,7 +341,10 @@ Resources:
       ResourceRecords: 
         - !GetAtt WebInstance.PublicDnsName
     DependsOn:
-      - HostedZone
+      Fn::If:
+        - ProvisionHostedZone
+        - HostedZone
+        - ''
       - ServicesInstance
 
   ServicesInstance:
