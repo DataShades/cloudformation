@@ -318,34 +318,38 @@ Resources:
   ServicesInstanceDNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
-      Name: "provision-services"
-      HostedZoneName: !Ref HostedZoneTLD
+      Name:
+        Fn::Join:
+          - ''
+          - - 'provision-services.'
+            - !Ref HostedZoneTLD
+      HostedZoneName:
+        Fn::Join:
+          - ''
+          - - !Ref HostedZoneTLD
+            - "."
       Type: CNAME
       TTL: 60
       ResourceRecords: 
         - !GetAtt ServicesInstance.PublicDnsName
-    DependsOn:
-      Fn::If:
-        - ProvisionHostedZone
-        - HostedZone
-        - ''
-      - ServicesInstance
 
   WebInstanceDNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
-      Name: "provision-webmaster"
-      HostedZoneName: !Ref HostedZoneTLD
+      Name:
+        Fn::Join:
+          - ''
+          - - 'provision-webmaster.'
+            - !Ref HostedZoneTLD
+      HostedZoneName:
+        Fn::Join:
+          - ''
+          - - !Ref HostedZoneTLD
+            - "."
       Type: CNAME
       TTL: 60
       ResourceRecords: 
         - !GetAtt WebInstance.PublicDnsName
-    DependsOn:
-      Fn::If:
-        - ProvisionHostedZone
-        - HostedZone
-        - ''
-      - ServicesInstance
 
   ServicesInstance:
     Type: AWS::EC2::Instance
