@@ -388,6 +388,9 @@ Resources:
             - - !Ref StackVersion
               - "CKAN"
         -
+          Key: "StackType"
+          Value: !Ref StackVerson
+        -
           Key: "HostedZone"
           Value: !Ref HostedZoneTLD
         -
@@ -429,6 +432,9 @@ Resources:
               - "-"
               - - !Ref StackVersion
                 - "WEB-MASTER"
+        -
+          Key: "StackType"
+          Value: !Ref StackVerson
         -
           Key: "StackName"
           Value:
