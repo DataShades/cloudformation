@@ -381,6 +381,9 @@ Resources:
             - - !Ref StackVersion
               - "SERVICES"
         -
+          Key: "DNS"
+          Value: "NA"
+        -
           Key: "StackName"
           Value: 
             Fn::Join:
@@ -435,6 +438,9 @@ Resources:
         -
           Key: "StackType"
           Value: !Ref StackVerson
+        -
+          Key: "DNS"
+          Value: "NA"
         -
           Key: "StackName"
           Value:
