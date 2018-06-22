@@ -392,7 +392,7 @@ Resources:
               - "CKAN"
         -
           Key: "StackType"
-          Value: !Ref StackVerson
+          Value: !Ref StackVersion
         -
           Key: "HostedZone"
           Value: !Ref HostedZoneTLD
