@@ -437,7 +437,7 @@ Resources:
                 - "WEB-MASTER"
         -
           Key: "StackType"
-          Value: !Ref StackVerson
+          Value: !Ref StackVersion
         -
           Key: "DNS"
           Value: "NA"
