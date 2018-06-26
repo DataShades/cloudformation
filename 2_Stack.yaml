@@ -523,6 +523,15 @@ Resources:
   EFSVolume:
     Condition: ProvisionEFS
     Type: AWS::EFS::FileSystem
+    Properties:
+      FileSystemTags:
+        -
+          Key: "StackName"
+          Value:
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "CKAN" 
 
 Outputs:
   RDSInstance:
