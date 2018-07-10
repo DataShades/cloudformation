@@ -526,12 +526,23 @@ Resources:
     Properties:
       FileSystemTags:
         -
-          Key: "StackName"
+          Key: "Name"
           Value:
             Fn::Join:
             - "-"
             - - !Ref StackVersion
               - "CKAN" 
+
+  EFSMountTarget:
+    Condition: ProvisionEFS
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSVolume
+      SecurityGroups:
+        - !Ref AdminSecurityGroup
+      SubnetId:
+        - !Ref SubnetA
+        - !Ref SubnetB 
 
 Outputs:
   RDSInstance:
