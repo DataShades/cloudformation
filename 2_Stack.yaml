@@ -533,7 +533,7 @@ Resources:
             - - !Ref StackVersion
               - "CKAN" 
 
-  EFSMountTarget:
+  EFSMountTargetA:
     Condition: ProvisionEFS
     Type: AWS::EFS::MountTarget
     Properties:
@@ -541,8 +541,17 @@ Resources:
       SecurityGroups:
         - !Ref AdminSecurityGroup
       SubnetId:
-        - !Ref SubnetA
-        - !Ref SubnetB 
+        Ref: SubnetA
+
+  EFSMountTargetB:
+    Condition: ProvisionEFS
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSVolume
+      SecurityGroups:
+        - !Ref AdminSecurityGroup
+      SubnetId:
+        Ref: SubnetB
 
 Outputs:
   RDSInstance:
