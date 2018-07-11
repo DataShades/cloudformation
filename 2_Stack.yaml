@@ -12,6 +12,7 @@ Metadata:
           - VPC
           - SubnetA
           - SubnetB
+          - SubnetC
           - AdminSecurityGroup
           - HostedZoneTLD
           - CreateHostedZone
@@ -50,6 +51,8 @@ Metadata:
         default: "Primary subnet:"
       SubnetB:
         default: "Secondary subnet:"
+      SubnetC:
+        default: "Third subnet:"
       AdminSecurityGroup:
         default: "Admin Security Group:"
       HostedZoneTLD:
@@ -98,6 +101,9 @@ Parameters:
   SubnetB:
     Type: AWS::EC2::Subnet::Id
     Description: Select a secondary subnet within chosen VPC.
+  SubnetC:
+    Type: AWS::EC2::Subnet::Id
+    Description: Select a third subnet within chosen VPC.
   AdminSecurityGroup:
     Description: Select existing security group allowing admin access to new instances.
     Type: AWS::EC2::SecurityGroup::Id
@@ -251,6 +257,7 @@ Resources:
       SubnetIds:
         - !Ref SubnetA
         - !Ref SubnetB
+        - !Ref SubnetC
 
   RDS:
     Type: AWS::RDS::DBInstance
@@ -493,6 +500,7 @@ Resources:
       Subnets:
         - !Ref SubnetA
         - !Ref SubnetB
+        - !Ref SubnetC
 
   WebELBCNAME:
     Condition: ProvisionELB
@@ -552,6 +560,16 @@ Resources:
         - !Ref AdminSecurityGroup
       SubnetId:
         Ref: SubnetB
+
+  EFSMountTargetC:
+    Condition: ProvisionEFS
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSVolume
+      SecurityGroups:
+        - !Ref AdminSecurityGroup
+      SubnetId:
+        Ref: SubnetC
 
 Outputs:
   RDSInstance:
