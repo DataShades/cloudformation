@@ -22,6 +22,6 @@ The following resources will be created:
 * An Elastic Load Balancer (optional)
 * An Elastic File System (optional)
 
-# Next steps
+## Next steps
 
 Once your stack has been created you can set up the instances manually, or utilise the Ansible playbook and roles [here](https://git.links.com.au/Datashades/ansible).
