@@ -16,6 +16,7 @@ Metadata:
           - AdminSecurityGroup
           - HostedZoneTLD
           - CreateHostedZone
+          - CreateIAMRole
           - KeyPair
       -
         Label:
@@ -59,6 +60,8 @@ Metadata:
         default: "Hosted Zone for stack DNS:"
       CreateHostedZone:
         default: "Create Hosted Zone?"
+      CreateIAMRole:
+        default: "Create an AutoManage IAM role?"
       KeyPair:
         default: "SSH key pair:"
       ServicesInstanceType:
@@ -114,6 +117,13 @@ Parameters:
     MaxLength: '254'
   CreateHostedZone:
     Description: Do you need the hosted zone (above) to be created for you?
+    Type: String
+    Default: 'no'
+    AllowedValues:
+      - 'yes'
+      - 'no'
+  CreateIAMRole:
+    Description: Create an AutoManage IAM role if one doesn't already exist.
     Type: String
     Default: 'no'
     AllowedValues:
@@ -227,6 +237,10 @@ Conditions:
     Fn::Equals:
       - 'yes'
       - !Ref CreateHostedZone
+  ProvisionIAMRole:
+    Fn::Equals:
+      - 'yes'
+      - !Ref CreateIAMRole
   ProvisionRDS:
     Fn::Equals:
       - 'yes'
@@ -322,6 +336,32 @@ Resources:
         Comment: TLD for Datashades stack
       Name: !Ref HostedZoneTLD
 
+  IAMRole:
+    Type: AWS::IAM::Role
+    Condition: ProvisionIAMRole
+    Properties:
+      AssumeRolePolicyDocument: 
+          Version: "2012-10-17"
+          Statement: 
+            - 
+              Effect: "Allow"
+              Principal: 
+                Service: 
+                  - "ec2.amazonaws.com"
+              Action: 
+                - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/PowerUserAccess"
+      RoleName: "AutoManage"
+
+  IAMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Condition: ProvisionIAMRole
+    Properties:
+      Roles:
+        - "AutoManage"
+      InstanceProfileName: "AutoManage" 
+
   ServicesInstanceDNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
@@ -361,6 +401,7 @@ Resources:
   ServicesInstance:
     Type: AWS::EC2::Instance
     Properties:
+      IamInstanceProfile: "AutoManage"
       BlockDeviceMappings:
         -
           DeviceName: "/dev/xvda"
@@ -422,6 +463,7 @@ Resources:
   WebInstance:
     Type: AWS::EC2::Instance
     Properties:
+      IamInstanceProfile: "AutoManage"
       BlockDeviceMappings:
         -
           DeviceName: "/dev/xvda"
