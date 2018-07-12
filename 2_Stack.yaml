@@ -339,6 +339,7 @@ Resources:
   IAMRole:
     Type: AWS::IAM::Role
     Condition: ProvisionIAMRole
+    DeletionPolicy: Retain
     Properties:
       AssumeRolePolicyDocument: 
           Version: "2012-10-17"
@@ -357,6 +358,7 @@ Resources:
   IAMInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Condition: ProvisionIAMRole
+    DeletionPolicy: Retain
     Properties:
       Roles:
         - "AutoManage"
