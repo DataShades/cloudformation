@@ -53,7 +53,7 @@ Metadata:
       SubnetB:
         default: "Secondary subnet:"
       SubnetC:
-        default: "Third subnet:"
+        default: "Tertiary subnet:"
       AdminSecurityGroup:
         default: "Admin Security Group:"
       HostedZoneTLD:
@@ -106,7 +106,7 @@ Parameters:
     Description: Select a secondary subnet within chosen VPC.
   SubnetC:
     Type: AWS::EC2::Subnet::Id
-    Description: Select a third subnet within chosen VPC.
+    Description: Select a tertiary subnet within chosen VPC.
   AdminSecurityGroup:
     Description: Select existing security group allowing admin access to new instances.
     Type: AWS::EC2::SecurityGroup::Id
