@@ -625,3 +625,10 @@ Outputs:
     Condition: ProvisionEFS
     Value: !Ref EFSVolume
     Description: EFS volume ID
+
+  HostedZoneOutput:
+    Condition: ProvisionHostedZone
+    Value: !Join
+      - ' '
+      - !GetAtt HostedZone.NameServers
+    Description: The Hosted Zone name servers
