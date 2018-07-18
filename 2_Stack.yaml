@@ -331,6 +331,7 @@ Resources:
   HostedZone:
     Type: AWS::Route53::HostedZone
     Condition: ProvisionHostedZone
+    DeletionPolicy: Retain
     Properties:
       HostedZoneConfig:
         Comment: TLD for Datashades stack
