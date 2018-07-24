@@ -640,7 +640,7 @@ Resources:
       SubnetId:
         Ref: SubnetC
 
-  RDSSecretsManager:
+  RDSSecret:
     Condition: ProvisionRDS
     Type: AWS::SSM::Parameter
     Properties:
