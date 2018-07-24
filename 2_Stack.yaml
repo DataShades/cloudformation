@@ -526,8 +526,8 @@ Resources:
       Name:
         Fn::Join:
         - "-"
-        - - !Ref AWS::StackName
-          - 'ELB'
+        - - !Ref StackVersion
+          - "CKAN"
       Scheme: internet-facing
       SecurityGroups: 
         - !Ref AdminSecurityGroup
@@ -543,7 +543,7 @@ Resources:
             - - !Ref StackVersion
               - "CKAN"
 
-  ELBListener:
+  ELBListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Condition: ProvisionELB
     Properties:
@@ -558,6 +558,11 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Condition: ProvisionELB
     Properties:
+      Name:
+        Fn::Join:
+        - "-"
+        - - !Ref StackVersion
+          - "CKAN"
       HealthCheckIntervalSeconds: 30
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 3
