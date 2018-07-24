@@ -547,8 +547,9 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Condition: ProvisionELB
     Properties:
-      Type: forward
-      TargetGroupArn: !Ref ELBTargetGroup
+      DefaultActions:
+        Type: forward
+        TargetGroupArn: !Ref ELBTargetGroup
       LoadBalancerArn: !Ref CKANELB
       Port: 80
       Protocol: HTTP
