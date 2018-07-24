@@ -548,8 +548,8 @@ Resources:
     Condition: ProvisionELB
     Properties:
       DefaultActions:
-        Type: forward
-        TargetGroupArn: !Ref ELBTargetGroup
+        - Type: forward
+          TargetGroupArn: !Ref ELBTargetGroup
       LoadBalancerArn: !Ref CKANELB
       Port: 80
       Protocol: HTTP
