@@ -520,25 +520,14 @@ Resources:
             !If [ProvisionRDS, !Ref RDS, "NA"]
 
   CKANELB:
-    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Condition: ProvisionELB
     Properties:
-      LoadBalancerName:
+      Name:
         Fn::Join:
         - "-"
         - - !Ref AWS::StackName
           - 'ELB'
-      HealthCheck:
-        Target: HTTP:80/
-        HealthyThreshold: '2'
-        UnhealthyThreshold: '6'
-        Interval: '30'
-        Timeout: '20'
-      Listeners:
-        - 
-          InstancePort: '80'
-          LoadBalancerPort: '80'
-          Protocol: HTTP
       Scheme: internet-facing
       SecurityGroups: 
         - !Ref AdminSecurityGroup
@@ -546,6 +535,35 @@ Resources:
         - !Ref SubnetA
         - !Ref SubnetB
         - !Ref SubnetC
+      Tags:
+        - Key: Name
+          Value:
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "CKAN"
+
+  ELBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: ProvisionELB
+    Properties:
+      Type: forward
+      TargetGroupArn: !Ref ELBTargetGroup
+    LoadBalancerArn: !Ref CKANELB
+    Port: 80
+    Protocol: HTTP
+
+  ELBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Condition: ProvisionELB
+    Properties:
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 3
+      VpcId: !Ref VPC
 
   WebELBCNAME:
     Condition: ProvisionELB
