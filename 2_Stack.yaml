@@ -287,10 +287,9 @@ Resources:
         - ''
         - - !Ref AWS::StackName
           - "-pgsql"
-      DBName: ckan_default
       DBSubnetGroupName: !Ref RDSSubnetGroup
       Engine: postgres
-      MasterUsername: ckan_dba
+      MasterUsername: rds_master
       MasterUserPassword: !Ref RDSPassword
       MultiAZ:
         Fn::If:
@@ -303,6 +302,15 @@ Resources:
       StorageType: gp2
       VPCSecurityGroups:
         - !Ref AdminSecurityGroup
+
+  RDSSecret:
+    Condition: ProvisionRDS
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Ref RDS
+      Type: String
+      Value: !Ref RDSPassword
+      Description: "RDS master password"
 
   RDSCNAME:
     Type: AWS::Route53::RecordSet
@@ -639,14 +647,6 @@ Resources:
         - !Ref AdminSecurityGroup
       SubnetId:
         Ref: SubnetC
-
-  RDSSecret:
-    Condition: ProvisionRDS
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: !Ref RDS
-      Type: String
-      Value: !Ref RDSPassword
 
 Outputs:
   RDSInstance:
