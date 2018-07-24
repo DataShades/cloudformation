@@ -640,6 +640,14 @@ Resources:
       SubnetId:
         Ref: SubnetC
 
+  RDSSecretsManager:
+    Condition: ProvisionRDS
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Ref RDS
+      Type: String
+      Value: !Ref RDSPassword
+
 Outputs:
   RDSInstance:
     Condition: ProvisionRDS
