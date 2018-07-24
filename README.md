@@ -19,7 +19,7 @@ The following resources will be created:
 * A Route53 hosted zone (optional)
 * An IAM role for EC2 permissions (required, unless a role named "AutoManage" already exists in the account)
 * An RDS (optional)
-* An Elastic Load Balancer (optional)
+* An Application Load Balancer (optional)
 * An Elastic File System (optional)
 
 ## Next steps
