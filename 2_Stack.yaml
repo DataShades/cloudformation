@@ -549,9 +549,9 @@ Resources:
     Properties:
       Type: forward
       TargetGroupArn: !Ref ELBTargetGroup
-    LoadBalancerArn: !Ref CKANELB
-    Port: 80
-    Protocol: HTTP
+      LoadBalancerArn: !Ref CKANELB
+      Port: 80
+      Protocol: HTTP
 
   ELBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -585,7 +585,7 @@ Resources:
         HostedZoneId:
           Fn::GetAtt:
           - CKANELB
-          - CanonicalHostedZoneNameID
+          - CanonicalHostedZoneID
         DNSName:
           Fn::GetAtt: 
           - CKANELB
