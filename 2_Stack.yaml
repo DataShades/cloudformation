@@ -18,6 +18,7 @@ Metadata:
           - CreateHostedZone
           - CreateIAMRole
           - KeyPair
+          - DBPassword
       -
         Label:
           default: "EC2 instances"
@@ -34,7 +35,6 @@ Metadata:
           - CreateRDS
           - RDSInstanceType
           - RDSVolumeSize
-          - RDSPassword
           - RDSEngine
           - RDSMultiAZ
       -
@@ -64,6 +64,8 @@ Metadata:
         default: "Create an IAM role?"
       KeyPair:
         default: "SSH key pair:"
+      DBPassword:
+        default: "Password for the database."
       ServicesInstanceType:
         default: "Services instance type:"
       ServicesInstanceRootVolumeSize:
@@ -80,8 +82,6 @@ Metadata:
         default: "RDS instance type:"
       RDSVolumeSize:
         default: "RDS volume size:"
-      RDSPassword:
-        default: "RDS password:"
       CreateELB:
         default: "Create Load Balancer?"
       CreateEFS:
@@ -208,7 +208,7 @@ Parameters:
     MinValue: 1
     MaxValue: 1000
     Default: 50
-  RDSPassword:
+  DBPassword:
     NoEcho: 'true'
     Description: Password must be at least 8 alphanumeric characters upto a maximum of 64 characters in length.
     Type: String
@@ -289,8 +289,9 @@ Resources:
           - "-pgsql"
       DBSubnetGroupName: !Ref RDSSubnetGroup
       Engine: postgres
-      MasterUsername: rds_master
-      MasterUserPassword: !Ref RDSPassword
+      DBName: ckan_default
+      MasterUsername: ckan_dbai
+      MasterUserPassword: !Ref DBPassword
       MultiAZ:
         Fn::If:
         - UseMultiAZ
@@ -303,14 +304,18 @@ Resources:
       VPCSecurityGroups:
         - !Ref AdminSecurityGroup
 
-  RDSSecret:
-    Condition: ProvisionRDS
+  DBPassSecret:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Ref RDS
+      Name:
+        Fn::Join:
+        - ''
+        - - !Ref StackVersion
+          - 'pg.'
+          - !Ref HostedZoneTLD
       Type: String
-      Value: !Ref RDSPassword
-      Description: "RDS master password"
+      Value: !Ref DBPassword
+      Description: "Postgres password"
 
   RDSCNAME:
     Type: AWS::Route53::RecordSet
