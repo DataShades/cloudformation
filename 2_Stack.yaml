@@ -216,7 +216,7 @@ Parameters:
     MaxLength: '64'
     AllowedPattern: "[a-zA-Z0-9]*"
     ConstraintDescription: Must be 8 - 64 alphanumeric characters.
-    Default: "unUsedPassword123"
+    Default: ""
   CreateELB:
     Description: An ELB is only necessary in UAT or PROD environments.
     Type: String
