@@ -290,7 +290,7 @@ Resources:
       DBSubnetGroupName: !Ref RDSSubnetGroup
       Engine: postgres
       DBName: ckan_default
-      MasterUsername: ckan_dbai
+      MasterUsername: ckan_dba
       MasterUserPassword: !Ref DBPassword
       MultiAZ:
         Fn::If:
