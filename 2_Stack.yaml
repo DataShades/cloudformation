@@ -218,7 +218,7 @@ Parameters:
     ConstraintDescription: Must be 8 - 64 alphanumeric characters.
     Default: "mr4i9jmkm83390230nmgjbnjwnb"
   CreateELB:
-    Description: An ELB is only necessary in UAT or PROD environments.
+    Description: An ELB is only necessary in a PROD environments.
     Type: String
     Default: 'no'
     AllowedValues:
