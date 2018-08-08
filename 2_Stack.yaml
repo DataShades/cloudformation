@@ -493,6 +493,10 @@ Resources:
           Key: "RDS-ID"
           Value:
             !If [ProvisionRDS, !Ref RDS, "NA"]
+        -
+          Key: "ELB-ID"
+          Value:
+            !If [ProvisionELB, !Ref CKANELB, "NA"]
   
   WebInstance:
     Type: AWS::EC2::Instance
@@ -550,6 +554,10 @@ Resources:
           Key: "RDS-ID"
           Value:
             !If [ProvisionRDS, !Ref RDS, "NA"]
+        -
+          Key: "ELB-ID"
+          Value:
+            !If [ProvisionELB, !Ref CKANELB, "NA"]
 
   CKANELB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
