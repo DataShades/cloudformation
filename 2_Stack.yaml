@@ -571,6 +571,7 @@ Resources:
       Scheme: internet-facing
       SecurityGroups: 
         - !Ref AdminSecurityGroup
+        - !Ref WebAccessSecurityGroup
       Subnets:
         - !Ref SubnetA
         - !Ref SubnetB
