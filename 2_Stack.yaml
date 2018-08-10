@@ -609,7 +609,7 @@ Resources:
       Port: 80
       Protocol: HTTP
       Targets:
-        - Id:
+      - Id:
           Ref: WebInstance
         Port: 80
       UnhealthyThresholdCount: 3
