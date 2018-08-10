@@ -570,7 +570,6 @@ Resources:
           - "CKAN"
       Scheme: internet-facing
       SecurityGroups: 
-        - !Ref AdminSecurityGroup
         - !Ref WebAccessSecurityGroup
       Subnets:
         - !Ref SubnetA
