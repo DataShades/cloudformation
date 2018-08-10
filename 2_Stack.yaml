@@ -608,6 +608,10 @@ Resources:
       HealthyThresholdCount: 3
       Port: 80
       Protocol: HTTP
+      Targets:
+        - Id:
+          Ref: WebInstance
+        Port: 80
       UnhealthyThresholdCount: 3
       VpcId: !Ref VPC
 
