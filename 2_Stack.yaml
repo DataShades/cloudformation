@@ -606,6 +606,8 @@ Resources:
       HealthCheckIntervalSeconds: 30
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 3
+      Matcher:
+        HttpCode: '200,301'
       Port: 80
       Protocol: HTTP
       Targets:
