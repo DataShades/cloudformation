@@ -132,7 +132,7 @@ Parameters:
     Default: 172.21.0.0/24,172.21.16.0/24,172.21.32.0/24
   InclProd:
     Type: String
-    Default: 'yes'
+    Default: 'no'
     AllowedValues:
     - 'yes'
     - 'no'
