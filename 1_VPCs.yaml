@@ -75,12 +75,12 @@ Parameters:
     MaxValue: '4'
     MinValue: '1'
     Type: Number
-    Default: '1'
+    Default: '3'
   AdminIPs:
     Description: Comma separated list of CIDR Addresses for Admin Security Group
     Type: CommaDelimitedList
     ConstraintDescription: Can only contain IP Addresses separated by commas.
-    Default: 203.217.61.171/32
+    Default: 52.71.32.118/32, 54.252.179.55/32, 52.74.73.198/32
   SubnetQty:
     MaxValue: '3'
     MinValue: '1'
