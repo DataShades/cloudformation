@@ -559,6 +559,23 @@ Resources:
           Value:
             !If [ProvisionELB, !Ref CKANELB, "NA"]
 
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Condition: ProvisionELB
+    Properties:
+      AutoScalingGroupName:
+        Fn::Join:
+        - "-"
+        - - !Ref StackVersion
+          - "CKAN"
+      VPCZoneIdentifier:
+        - !Ref SubnetB
+      InstanceId: !Ref WebInstance
+      MinSize: 1
+      MaxSize: 1
+      TargetGroupARNs:
+        - !Ref ELBTargetGroup
+
   CKANELB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Condition: ProvisionELB
