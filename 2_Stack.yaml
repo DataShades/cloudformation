@@ -467,7 +467,7 @@ Resources:
       SecurityGroupIds: 
         - !Ref AdminSecurityGroup
       KeyName: !Ref KeyPair
-      ImageId: !FindInMap [ OS2AMI, !Ref OSVersion ]
+      ImageId: !FindInMap [ OS2AMI, !Ref OSVersion, AMI ]
       InstanceType: !Ref ServicesInstanceType
       SubnetId: !Ref SubnetA
       Tags:
@@ -528,7 +528,7 @@ Resources:
         - !Ref AdminSecurityGroup
         - !Ref WebAccessSecurityGroup
       KeyName: !Ref KeyPair
-      ImageId: !FindInMap [ OS2AMI, !Ref OSVersion ]
+      ImageId: !FindInMap [ OS2AMI, !Ref OSVersion, AMI ]
       InstanceType: !Ref WebInstanceType
       SubnetId: !Ref SubnetB
       Tags:
