@@ -9,6 +9,7 @@ Metadata:
           default: "General options"
         Parameters:
           - StackVersion
+          - OSVersion
           - VPC
           - SubnetA
           - SubnetB
@@ -46,6 +47,8 @@ Metadata:
     ParameterLabels:
       StackVersion:
         default: "Stack version:"
+      OSVersion:
+        default: "Choose the desired operating system for this stack."
       VPC:
         default: "Stack VPC:"
       SubnetA:
@@ -95,6 +98,13 @@ Parameters:
       - 'DEV'
       - 'UAT'
       - 'PROD'
+  OSVersion:
+    Description: The operating system for the instances within this stack.
+    Type: String
+    Default: "Amazon Linux 1"
+    AllowedValues:
+      - 'Amazon Linux 1'
+      - 'Amazon Linux 2'
   VPC:
     Description: Choose existing VPC for this stack.
     Type: AWS::EC2::VPC::Id
@@ -167,8 +177,9 @@ Parameters:
       - t2.small
       - t2.medium
       - t2.large
-      - m3.medium
-      - m3.large
+      - t3.small
+      - t3.medium
+      - t3.large
       - m4.large
       - m4.xlarge
       - m4.2xlarge
@@ -195,8 +206,6 @@ Parameters:
       - db.t2.small
       - db.t2.medium
       - db.t2.large
-      - db.m3.medium
-      - db.m3.large
       - db.m4.large
       - db.m4.xlarge
       - db.m4.2xlarge
@@ -257,6 +266,13 @@ Conditions:
     Fn::Equals:
       - 'yes'
       - !Ref CreateEFS
+
+Mappings: 
+  OS2AMI: 
+    "Amazon Linux 1": 
+      AMI: "ami-09b42976632b27e9b"
+    "Amazon Linux 2": 
+      AMI: "ami-00e17d1165b9dd3ec"
 
 Resources:
   RDSSubnetGroup:
@@ -451,7 +467,7 @@ Resources:
       SecurityGroupIds: 
         - !Ref AdminSecurityGroup
       KeyName: !Ref KeyPair
-      ImageId: ami-423bec20
+      ImageId: !FindInMap [ OS2AMI, !Ref OSVersion ]
       InstanceType: !Ref ServicesInstanceType
       SubnetId: !Ref SubnetA
       Tags:
@@ -512,7 +528,7 @@ Resources:
         - !Ref AdminSecurityGroup
         - !Ref WebAccessSecurityGroup
       KeyName: !Ref KeyPair
-      ImageId: ami-423bec20
+      ImageId: !FindInMap [ OS2AMI, !Ref OSVersion ]
       InstanceType: !Ref WebInstanceType
       SubnetId: !Ref SubnetB
       Tags:
