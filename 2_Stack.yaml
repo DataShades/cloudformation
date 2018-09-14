@@ -101,7 +101,7 @@ Parameters:
   OSVersion:
     Description: "Amazon Linux 1 or 2 (AL1 / AL2)"
     Type: String
-    Default: 
+    Default: AL1 
     AllowedValues:
       - 'AL1'
       - 'AL2'
