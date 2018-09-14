@@ -99,12 +99,12 @@ Parameters:
       - 'UAT'
       - 'PROD'
   OSVersion:
-    Description: The operating system for the instances within this stack.
+    Description: "Amazon Linux 1 or 2 (AL1 / AL2)"
     Type: String
-    Default: "Amazon Linux 1"
+    Default: 
     AllowedValues:
-      - 'Amazon Linux 1'
-      - 'Amazon Linux 2'
+      - 'AL1'
+      - 'AL2'
   VPC:
     Description: Choose existing VPC for this stack.
     Type: AWS::EC2::VPC::Id
@@ -269,9 +269,9 @@ Conditions:
 
 Mappings: 
   OS2AMI: 
-    "Amazon Linux 1": 
+    AL1: 
       AMI: "ami-09b42976632b27e9b"
-    "Amazon Linux 2": 
+    AL2: 
       AMI: "ami-00e17d1165b9dd3ec"
 
 Resources:
