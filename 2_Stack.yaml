@@ -99,11 +99,10 @@ Parameters:
       - 'UAT'
       - 'PROD'
   OSVersion:
-    Description: "Amazon Linux 1 or 2 (AL1 / AL2)"
+    Description: "Amazon Linux 2"
     Type: String
-    Default: AL1 
+    Default: AL2 
     AllowedValues:
-      - 'AL1'
       - 'AL2'
   VPC:
     Description: Choose existing VPC for this stack.
@@ -145,11 +144,14 @@ Parameters:
   ServicesInstanceType:
     Description: Select Services instance type.
     Type: String
-    Default: t2.small
+    Default: t3.small
     AllowedValues:
       - t2.small
       - t2.medium
       - t2.large
+      - t3.small
+      - t3.medium
+      - t3.large
       - m3.medium
       - m3.large
       - m4.large
@@ -158,13 +160,13 @@ Parameters:
       - m4.4xlarge
       - m4.10xlarge
   ServicesInstanceRootVolumeSize:
-    Description: Define size in GB (1-100).
+    Description: Define size in GB (10-100).
     Type: Number
-    MinValue: 8
+    MinValue: 10
     MaxValue: 100
-    Default: 10
+    Default: 12
   ServicesInstanceDataVolumeSize:
-    Description: Define size in GB (1 -1000).
+    Description: Define size in GB (25-1000).
     Type: Number
     MinValue: 25
     MaxValue: 1000
@@ -172,7 +174,7 @@ Parameters:
   WebInstanceType:
     Description: Select Web instance type.
     Type: String
-    Default: t2.small
+    Default: t3.small
     AllowedValues:
       - t2.small
       - t2.medium
@@ -180,17 +182,18 @@ Parameters:
       - t3.small
       - t3.medium
       - t3.large
+      - m3.medium
       - m4.large
       - m4.xlarge
       - m4.2xlarge
       - m4.4xlarge
       - m4.10xlarge
   WebInstanceRootVolumeSize:
-    Description: Define size in GB (1-100).
+    Description: Define size in GB (10-100).
     Type: Number
-    MinValue: 8
+    MinValue: 10
     MaxValue: 100
-    Default: 10
+    Default: 12
   CreateRDS:
     Description: RDS is only necessary in PROD environments.
     Type: String
@@ -201,11 +204,14 @@ Parameters:
   RDSInstanceType:
     Description: Select RDS instance type.
     Type: String
-    Default: db.t2.medium
+    Default: db.t3.medium
     AllowedValues:
       - db.t2.small
       - db.t2.medium
       - db.t2.large
+      - db.t3.small
+      - db.t3.medium
+      - db.t3.large
       - db.m4.large
       - db.m4.xlarge
       - db.m4.2xlarge
@@ -349,6 +355,7 @@ Resources:
           - "-pgsql"
       DBSubnetGroupName: !Ref RDSSubnetGroup
       Engine: postgres
+      EngineVersion: 11.14
       DBName: ckan_default
       MasterUsername: ckan_dba
       MasterUserPassword: !Ref DBPassword
