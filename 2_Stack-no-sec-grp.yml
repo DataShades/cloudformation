@@ -1,0 +1,721 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Creates an EC2 Datashades CKAN stack with optional extras such as EFS.'
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "General options"
+        Parameters:
+          - StackVersion
+          - OSVersion
+          - VPC
+          - SubnetA
+          - SubnetB
+          - SubnetC
+          - AdminSecurityGroup
+          - HostedZoneTLD
+          - CreateHostedZone
+          - CreateIAMRole
+          - KeyPair
+          - DBPassword
+      -
+        Label:
+          default: "EC2 instances"
+        Parameters:
+          - ServicesInstanceType
+          - ServicesInstanceRootVolumeSize
+          - ServicesInstanceDataVolumeSize
+          - WebInstanceType
+          - WebInstanceRootVolumeSize
+      -
+        Label:
+          default: "RDS"
+        Parameters:
+          - CreateRDS
+          - RDSInstanceType
+          - RDSVolumeSize
+          - RDSEngine
+          - RDSMultiAZ
+      -
+        Label:
+          default: "Other infrastructure"
+        Parameters:
+          - CreateELB
+          - CreateEFS
+    ParameterLabels:
+      StackVersion:
+        default: "Stack version:"
+      OSVersion:
+        default: "Choose the desired operating system for this stack."
+      VPC:
+        default: "Stack VPC:"
+      SubnetA:
+        default: "Primary subnet:"
+      SubnetB:
+        default: "Secondary subnet:"
+      SubnetC:
+        default: "Tertiary subnet:"
+      AdminSecurityGroup:
+        default: "Admin Security Group:"
+      HostedZoneTLD:
+        default: "Hosted Zone for stack DNS:"
+      CreateHostedZone:
+        default: "Create Hosted Zone?"
+      CreateIAMRole:
+        default: "Create an IAM role?"
+      KeyPair:
+        default: "SSH key pair:"
+      DBPassword:
+        default: "Password for the database."
+      ServicesInstanceType:
+        default: "Services instance type:"
+      ServicesInstanceRootVolumeSize:
+        default: "Services root volume size:"
+      ServicesInstanceDataVolumeSize:
+        default: "Services data volume size:"
+      WebInstanceType:
+        default: "Web instance type:"
+      WebInstanceRootVolumeSize:
+        default: "Web instance root volume size:"
+      CreateRDS:
+        default: "Create RDS?"
+      RDSInstanceType:
+        default: "RDS instance type:"
+      RDSVolumeSize:
+        default: "RDS volume size:"
+      CreateELB:
+        default: "Create Load Balancer?"
+      CreateEFS:
+        default: "Create EFS volume?"
+Parameters:
+  StackVersion:
+    Description: The type of stack you're provisioning. Used to define instance names and tags.
+    Type: String
+    Default: DEV
+    AllowedValues:
+      - 'DEV'
+      - 'UAT'
+      - 'PROD'
+  OSVersion:
+    Description: "Amazon Linux 2"
+    Type: String
+    Default: AL2 
+    AllowedValues:
+      - 'AL2'
+  VPC:
+    Description: Choose existing VPC for this stack.
+    Type: AWS::EC2::VPC::Id
+  SubnetA:
+    Type: AWS::EC2::Subnet::Id
+    Description: Select a primary subnet within chosen VPC.
+  SubnetB:
+    Type: AWS::EC2::Subnet::Id
+    Description: Select a secondary subnet within chosen VPC.
+  SubnetC:
+    Type: AWS::EC2::Subnet::Id
+    Description: Select a tertiary subnet within chosen VPC.
+  AdminSecurityGroup:
+    Description: Select existing security group allowing admin access to new instances.
+    Type: AWS::EC2::SecurityGroup::Id
+  HostedZoneTLD:
+    Description: Route53 hosted zone for stack (e.g. client.links.com.au)
+    Type: String
+    MinLength: '6'
+    MaxLength: '254'
+  CreateHostedZone:
+    Description: Do you need the hosted zone (above) to be created for you?
+    Type: String
+    Default: 'no'
+    AllowedValues:
+      - 'yes'
+      - 'no'
+  CreateIAMRole:
+    Description: Creates an AutoManage IAM role (required if one doesn't already exist)
+    Type: String
+    Default: 'no'
+    AllowedValues:
+      - 'yes'
+      - 'no'
+  KeyPair:
+    Description: Select an existing SSH key.
+    Type: AWS::EC2::KeyPair::KeyName
+  ServicesInstanceType:
+    Description: Select Services instance type.
+    Type: String
+    Default: t3.small
+    AllowedValues:
+      - t3.small
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+      - m5.large
+      - m5.xlarge
+  ServicesInstanceRootVolumeSize:
+    Description: Define size in GB (10-100).
+    Type: Number
+    MinValue: 10
+    MaxValue: 100
+    Default: 16
+  ServicesInstanceDataVolumeSize:
+    Description: Define size in GB (25-1000).
+    Type: Number
+    MinValue: 25
+    MaxValue: 1000
+    Default: 50
+  WebInstanceType:
+    Description: Select Web instance type.
+    Type: String
+    Default: t3.small
+    AllowedValues:
+      - t3.small
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+      - m5.large
+      - m5.xlarge
+  WebInstanceRootVolumeSize:
+    Description: Define size in GB (10-100).
+    Type: Number
+    MinValue: 10
+    MaxValue: 100
+    Default: 16
+  CreateRDS:
+    Description: RDS is only necessary in PROD environments.
+    Type: String
+    Default: 'no'
+    AllowedValues:
+      - 'yes'
+      - 'no'
+  RDSInstanceType:
+    Description: Select RDS instance type.
+    Type: String
+    Default: db.t3.medium
+    AllowedValues:
+      - db.t3.small
+      - db.t3.medium
+      - db.t3.large
+      - db.t3.xlarge
+      - db.m5.large
+      - db.m5.xlarge
+  RDSVolumeSize:
+    Description: Define size in GB (20-1000).
+    Type: Number
+    MinValue: 20
+    MaxValue: 1000
+    Default: 50
+  DBPassword:
+    NoEcho: 'true'
+    Description: Password must be at least 16 alphanumeric characters upto a maximum of 64 characters in length.
+    Type: String
+    MinLength: '16'
+    MaxLength: '64'
+    AllowedPattern: "[a-zA-Z0-9]*"
+    ConstraintDescription: Must be 8 - 64 alphanumeric characters.
+    Default: "mr4i9jmkm83390230nmgjbnjwnb"
+  CreateELB:
+    Description: An ELB is only necessary in a PROD environments.
+    Type: String
+    Default: 'no'
+    AllowedValues:
+      - 'yes'
+      - 'no'
+  CreateEFS:
+    Description: You can utilise an EFS volume to add redundancy.
+    Type: String
+    Default: 'no'
+    AllowedValues:
+      - 'yes'
+      - 'no'
+
+Conditions:
+  ProvisionHostedZone:
+    Fn::Equals:
+      - 'yes'
+      - !Ref CreateHostedZone
+  ProvisionIAMRole:
+    Fn::Equals:
+      - 'yes'
+      - !Ref CreateIAMRole
+  ProvisionRDS:
+    Fn::Equals:
+      - 'yes'
+      - !Ref CreateRDS
+  UseMultiAZ:
+    Fn::Equals:
+    - 'PROD'
+    - !Ref StackVersion
+  ProvisionELB:
+    Fn::Equals:
+      - 'yes'
+      - !Ref CreateELB
+  ProvisionEFS:
+    Fn::Equals:
+      - 'yes'
+      - !Ref CreateEFS
+
+Mappings:
+  RegionMap:
+    ap-northeast-1:
+      AL2: ami-030cf0a1edb8636ab
+    ap-northeast-2:
+      AL2: ami-0ff56409a6e8ea2a0
+    ap-northeast-3:
+      AL2: ami-0fd62af6c414514de
+    ap-south-1:
+      AL2: ami-0d81306eddc614a45
+    ap-southeast-1:
+      AL2: ami-064eb0bee0c5402c5
+    ap-southeast-2:
+      AL2: ami-047dcdc46ac4f2e6b
+    ap-southeast-4:
+      AL2: ami-03b50fcaf7f27222f
+    ca-central-1:
+      AL2: ami-0e9d8c96b045dbc75
+    eu-central-1:
+      AL2: ami-06616b7884ac98cdd
+    eu-north-1:
+      AL2: ami-02d0b04e8c50472ce
+    eu-west-1:
+      AL2: ami-08fea9e08576c443b
+    eu-west-2:
+      AL2: ami-0055e70f580e9ae80
+    eu-west-3:
+      AL2: ami-09352f5c929bf417c
+    sa-east-1:
+      AL2: ami-0054772d386e00cfc
+    us-east-1:
+      AL2: ami-005f9685cb30f234b
+    us-east-2:
+      AL2: ami-02238ac43d6385ab3
+    us-west-1:
+      AL2: ami-0925fd223898ee5ba
+    us-west-2:
+      AL2: ami-0df24e148fdb9f1d8
+
+Resources:
+  RDSSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Condition: ProvisionRDS
+    Properties:
+      DBSubnetGroupDescription:
+        Fn::Join:
+          - ''
+          - - !Ref AWS::StackName
+            - "-rds-subnet"
+      SubnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+        - !Ref SubnetC
+
+  RDS:
+    Type: AWS::RDS::DBInstance
+    Condition: ProvisionRDS
+    Properties:
+      AllocatedStorage: !Ref RDSVolumeSize
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod: '31'
+      DBInstanceClass: !Ref RDSInstanceType
+      DBInstanceIdentifier:
+        Fn::Join:
+        - ''
+        - - !Ref AWS::StackName
+          - "-pgsql"
+      DBSubnetGroupName: !Ref RDSSubnetGroup
+      Engine: postgres
+      EngineVersion: 12.13
+      DBName: ckan_default
+      MasterUsername: ckan_dba
+      MasterUserPassword: !Ref DBPassword
+      MultiAZ:
+        Fn::If:
+        - UseMultiAZ
+        - 'true'
+        - 'false'
+      PreferredBackupWindow: 14:00-15:00
+      PreferredMaintenanceWindow: Sun:15:30-Sun:16:30
+      PubliclyAccessible: true
+      StorageType: gp3
+      VPCSecurityGroups:
+        - !Ref AdminSecurityGroup
+
+  DBPassSecret:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name:
+        Fn::Join:
+        - ''
+        - - !Ref StackVersion
+          - 'pg.'
+          - !Ref HostedZoneTLD
+      Type: String
+      Value: !Ref DBPassword
+      Description: "Postgres password"
+
+  RDSCNAME:
+    Type: AWS::Route53::RecordSet
+    Condition: ProvisionRDS
+    DependsOn: RDS
+    Properties:
+      Type: CNAME
+      TTL: '60'
+      Name:
+        Fn::Join:
+        - ''
+        - - !Ref StackVersion
+          - 'pg.'
+          - !Ref HostedZoneTLD
+      HostedZoneName:
+        Fn::Join:
+        - ''
+        - - !Ref HostedZoneTLD
+          - "."
+      ResourceRecords:
+        -
+          Fn::GetAtt:
+          - RDS
+          - Endpoint.Address
+
+  HostedZone:
+    Type: AWS::Route53::HostedZone
+    Condition: ProvisionHostedZone
+    DeletionPolicy: Retain
+    Properties:
+      HostedZoneConfig:
+        Comment: TLD for Datashades stack
+      Name: !Ref HostedZoneTLD
+
+  IAMRole:
+    Type: AWS::IAM::Role
+    Condition: ProvisionIAMRole
+    DeletionPolicy: Retain
+    Properties:
+      AssumeRolePolicyDocument: 
+          Version: "2012-10-17"
+          Statement: 
+            - 
+              Effect: "Allow"
+              Principal: 
+                Service: 
+                  - "ec2.amazonaws.com"
+              Action: 
+                - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/PowerUserAccess"
+      RoleName: "AutoManage"
+
+  IAMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Condition: ProvisionIAMRole
+    DeletionPolicy: Retain
+    Properties:
+      Roles:
+        - "AutoManage"
+      InstanceProfileName: "AutoManage" 
+
+  ServicesInstanceDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name:
+        Fn::Join:
+          - ''
+          - - 'provision-services.'
+            - !Ref HostedZoneTLD
+      HostedZoneName:
+        Fn::Join:
+          - ''
+          - - !Ref HostedZoneTLD
+            - "."
+      Type: CNAME
+      TTL: 60
+      ResourceRecords: 
+        - !GetAtt ServicesInstance.PublicDnsName
+
+  WebInstanceDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name:
+        Fn::Join:
+          - ''
+          - - 'provision-webmaster.'
+            - !Ref HostedZoneTLD
+      HostedZoneName:
+        Fn::Join:
+          - ''
+          - - !Ref HostedZoneTLD
+            - "."
+      Type: CNAME
+      TTL: 60
+      ResourceRecords: 
+        - !GetAtt WebInstance.PublicDnsName
+
+  ServicesInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      IamInstanceProfile: "AutoManage"
+      BlockDeviceMappings:
+        -
+          DeviceName: "/dev/xvda"
+          Ebs:
+            VolumeSize: !Ref ServicesInstanceRootVolumeSize
+            VolumeType: gp3
+        -
+          DeviceName: "/dev/xvdf"
+          Ebs:
+            VolumeSize: !Ref ServicesInstanceDataVolumeSize
+            VolumeType: gp3
+            DeleteOnTermination: "false"
+      SecurityGroupIds: 
+        - !Ref AdminSecurityGroup
+      KeyName: !Ref KeyPair
+      ImageId: !FindInMap [ RegionMap, !Ref "AWS::Region", !Ref OSVersion ]
+      InstanceType: !Ref ServicesInstanceType
+      SubnetId: !Ref SubnetA
+      Tags:
+        -
+          Key: "Name"
+          Value:
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "SERVICES"
+        -
+          Key: "DNS"
+          Value: "NA"
+        -
+          Key: "StackName"
+          Value: 
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "CKAN"
+        -
+          Key: "StackType"
+          Value: !Ref StackVersion
+        -
+          Key: "HostedZone"
+          Value: !Ref HostedZoneTLD
+        -
+          Key: "ZoneID"
+          Value:
+            !If [ProvisionHostedZone, !Ref HostedZone, "NA"]
+        -
+          Key: "InstanceType"
+          Value: "SERVICES"
+        -
+          Key: "EFS-ID"
+          Value:
+            !If [ProvisionEFS, !Ref EFSVolume, "NA"]
+        -
+          Key: "RDS-ID"
+          Value:
+            !If [ProvisionRDS, !Ref RDS, "NA"]
+        -
+          Key: "ELB-ID"
+          Value:
+            !If [ProvisionELB, !Ref CKANELB, "NA"]
+  
+  WebInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      IamInstanceProfile: "AutoManage"
+      BlockDeviceMappings:
+        -
+          DeviceName: "/dev/xvda"
+          Ebs:
+            VolumeSize: !Ref WebInstanceRootVolumeSize
+            VolumeType: gp2
+      SecurityGroupIds: 
+        - !Ref AdminSecurityGroup
+      KeyName: !Ref KeyPair
+      ImageId: !FindInMap [ RegionMap, !Ref "AWS::Region", !Ref OSVersion ]
+      InstanceType: !Ref WebInstanceType
+      SubnetId: !Ref SubnetB
+      Tags:
+        -
+          Key: "Name"
+          Value: 
+            Fn::Join:
+              - "-"
+              - - !Ref StackVersion
+                - "WEB-MASTER"
+        -
+          Key: "StackType"
+          Value: !Ref StackVersion
+        -
+          Key: "DNS"
+          Value: "NA"
+        -
+          Key: "StackName"
+          Value:
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "CKAN"
+        -
+          Key: "HostedZone"
+          Value: !Ref HostedZoneTLD
+        -
+          Key: "ZoneID"
+          Value:
+            !If [ProvisionHostedZone, !Ref HostedZone, "NA"]
+        -
+          Key: "InstanceType"
+          Value: "WEB"
+        -
+          Key: "EFS-ID"
+          Value:
+            !If [ProvisionEFS, !Ref EFSVolume, "NA"]
+        -
+          Key: "RDS-ID"
+          Value:
+            !If [ProvisionRDS, !Ref RDS, "NA"]
+        -
+          Key: "ELB-ID"
+          Value:
+            !If [ProvisionELB, !Ref CKANELB, "NA"]
+
+  CKANELB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Condition: ProvisionELB
+    Properties:
+      Name:
+        Fn::Join:
+        - "-"
+        - - !Ref StackVersion
+          - "CKAN"
+      Scheme: internet-facing
+      Subnets:
+        - !Ref SubnetA
+        - !Ref SubnetB
+        - !Ref SubnetC
+      Tags:
+        - Key: Name
+          Value:
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "CKAN"
+
+  ELBListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: ProvisionELB
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ELBTargetGroup
+      LoadBalancerArn: !Ref CKANELB
+      Port: 80
+      Protocol: HTTP
+
+  ELBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Condition: ProvisionELB
+    Properties:
+      Name:
+        Fn::Join:
+        - "-"
+        - - !Ref StackVersion
+          - "CKAN"
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      Matcher:
+        HttpCode: '200,301'
+      Port: 80
+      Protocol: HTTP
+      Targets:
+      - Id:
+          Ref: WebInstance
+        Port: 80
+      UnhealthyThresholdCount: 3
+      VpcId: !Ref VPC
+
+  WebELBCNAME:
+    Condition: ProvisionELB
+    Type: AWS::Route53::RecordSet
+    DependsOn: CKANELB
+    Properties:
+      Type: A
+      Name:
+        Fn::Join:
+          - "."
+          - - !Ref StackVersion
+            - !Ref HostedZoneTLD
+      HostedZoneName:
+        Fn::Join:
+          - ''
+          - - !Ref HostedZoneTLD
+            - "."
+      AliasTarget:
+        HostedZoneId:
+          Fn::GetAtt:
+          - CKANELB
+          - CanonicalHostedZoneID
+        DNSName:
+          Fn::GetAtt: 
+          - CKANELB
+          - DNSName
+          
+  EFSVolume:
+    Condition: ProvisionEFS
+    Type: AWS::EFS::FileSystem
+    Properties:
+      FileSystemTags:
+        -
+          Key: "Name"
+          Value:
+            Fn::Join:
+            - "-"
+            - - !Ref StackVersion
+              - "CKAN" 
+
+  EFSMountTargetA:
+    Condition: ProvisionEFS
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSVolume
+      SecurityGroups:
+        - !Ref AdminSecurityGroup
+      SubnetId:
+        Ref: SubnetA
+
+  EFSMountTargetB:
+    Condition: ProvisionEFS
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSVolume
+      SecurityGroups:
+        - !Ref AdminSecurityGroup
+      SubnetId:
+        Ref: SubnetB
+
+  EFSMountTargetC:
+    Condition: ProvisionEFS
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref EFSVolume
+      SecurityGroups:
+        - !Ref AdminSecurityGroup
+      SubnetId:
+        Ref: SubnetC
+
+Outputs:
+  RDSInstance:
+    Condition: ProvisionRDS
+    Value: !Ref RDS
+    Description: RDS instance ID
+  
+  EFSVolume:
+    Condition: ProvisionEFS
+    Value: !Ref EFSVolume
+    Description: EFS volume ID
+
+  HostedZoneOutput:
+    Condition: ProvisionHostedZone
+    Value: !Join
+      - ' '
+      - !GetAtt HostedZone.NameServers
+    Description: The Hosted Zone name servers
