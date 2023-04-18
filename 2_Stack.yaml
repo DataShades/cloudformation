@@ -146,25 +146,18 @@ Parameters:
     Type: String
     Default: t3.small
     AllowedValues:
-      - t2.small
-      - t2.medium
-      - t2.large
       - t3.small
       - t3.medium
       - t3.large
-      - m3.medium
-      - m3.large
-      - m4.large
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
-      - m4.10xlarge
+      - t3.xlarge
+      - m5.large
+      - m5.xlarge
   ServicesInstanceRootVolumeSize:
     Description: Define size in GB (10-100).
     Type: Number
     MinValue: 10
     MaxValue: 100
-    Default: 12
+    Default: 16
   ServicesInstanceDataVolumeSize:
     Description: Define size in GB (25-1000).
     Type: Number
@@ -176,24 +169,18 @@ Parameters:
     Type: String
     Default: t3.small
     AllowedValues:
-      - t2.small
-      - t2.medium
-      - t2.large
       - t3.small
       - t3.medium
       - t3.large
-      - m3.medium
-      - m4.large
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
-      - m4.10xlarge
+      - t3.xlarge
+      - m5.large
+      - m5.xlarge
   WebInstanceRootVolumeSize:
     Description: Define size in GB (10-100).
     Type: Number
     MinValue: 10
     MaxValue: 100
-    Default: 12
+    Default: 16
   CreateRDS:
     Description: RDS is only necessary in PROD environments.
     Type: String
@@ -206,28 +193,23 @@ Parameters:
     Type: String
     Default: db.t3.medium
     AllowedValues:
-      - db.t2.small
-      - db.t2.medium
-      - db.t2.large
       - db.t3.small
       - db.t3.medium
       - db.t3.large
-      - db.m4.large
-      - db.m4.xlarge
-      - db.m4.2xlarge
-      - db.m4.4xlarge
-      - db.m4.10xlarge
+      - db.t3.xlarge
+      - db.m5.large
+      - db.m5.xlarge
   RDSVolumeSize:
-    Description: Define size in GB (1 -1000).
+    Description: Define size in GB (20-1000).
     Type: Number
-    MinValue: 1
+    MinValue: 20
     MaxValue: 1000
     Default: 50
   DBPassword:
     NoEcho: 'true'
-    Description: Password must be at least 8 alphanumeric characters upto a maximum of 64 characters in length.
+    Description: Password must be at least 16 alphanumeric characters upto a maximum of 64 characters in length.
     Type: String
-    MinLength: '8'
+    MinLength: '16'
     MaxLength: '64'
     AllowedPattern: "[a-zA-Z0-9]*"
     ConstraintDescription: Must be 8 - 64 alphanumeric characters.
@@ -275,54 +257,42 @@ Conditions:
 
 Mappings:
   RegionMap:
-    eu-north-1:
-      "AL1": "ami-86fe70f8"
-      "AL2": "ami-6d27a913"
-    ap-south-1:
-      "AL1": "ami-0ad42f4f66f6c1cc9"
-      "AL2": "ami-0937dcc711d38ef3f"
-    eu-west-3:
-      "AL1": "ami-0dd7e7ed60da8fb83"
-      "AL2": "ami-0854d53ce963f69d8"
-    eu-west-2:
-      "AL1": "ami-01419b804382064e4"
-      "AL2": "ami-0664a710233d7c148"
-    eu-west-1:
-      "AL1": "ami-08935252a36e25f85"
-      "AL2": "ami-0fad7378adf284ce0"
-    ap-northeast-2:
-      "AL1": "ami-00dc207f8ba6dc919"
-      "AL2": "ami-018a9a930060d38aa"
     ap-northeast-1:
-      "AL1": "ami-00a5245b4816c38e6"
-      "AL2": "ami-0d7ed3ddb85b521a6"
-    sa-east-1:
-      "AL1": "ami-05145e0b28ad8e0b2"
-      "AL2": "ami-0b04450959586da29"
-    ca-central-1:
-      "AL1": "ami-07423fb63ea0a0930"
-      "AL2": "ami-0de8b8e4bc1f125fe"
+      AL2: ami-030cf0a1edb8636ab
+    ap-northeast-2:
+      AL2: ami-0ff56409a6e8ea2a0
+    ap-northeast-3:
+      AL2: ami-0fd62af6c414514de
+    ap-south-1:
+      AL2: ami-0d81306eddc614a45
     ap-southeast-1:
-      "AL1": "ami-05b3bcf7f311194b3"
-      "AL2": "ami-04677bdaa3c2b6e24"
+      AL2: ami-064eb0bee0c5402c5
     ap-southeast-2:
-      "AL1": "ami-02fd0b06f06d93dfc"
-      "AL2": "ami-0c9d48b5db609ad6e"
+      AL2: ami-047dcdc46ac4f2e6b
+    ap-southeast-4:
+      AL2: ami-03b50fcaf7f27222f
+    ca-central-1:
+      AL2: ami-0e9d8c96b045dbc75
     eu-central-1:
-      "AL1": "ami-0cfbf4f6db41068ac"
-      "AL2": "ami-0eaec5838478eb0ba"
+      AL2: ami-06616b7884ac98cdd
+    eu-north-1:
+      AL2: ami-02d0b04e8c50472ce
+    eu-west-1:
+      AL2: ami-08fea9e08576c443b
+    eu-west-2:
+      AL2: ami-0055e70f580e9ae80
+    eu-west-3:
+      AL2: ami-09352f5c929bf417c
+    sa-east-1:
+      AL2: ami-0054772d386e00cfc
     us-east-1:
-      "AL1": "ami-0080e4c5bc078760e"
-      "AL2": "ami-035be7bafff33b6b6"
+      AL2: ami-005f9685cb30f234b
     us-east-2:
-      "AL1": "ami-0cd3dfa4e37921605"
-      "AL2": "ami-04328208f4f0cf1fe"
+      AL2: ami-02238ac43d6385ab3
     us-west-1:
-      "AL1": "ami-0ec6517f6edbf8044"
-      "AL2": "ami-0799ad445b5727125"
+      AL2: ami-0925fd223898ee5ba
     us-west-2:
-      "AL1": "ami-01e24be29428c15b2"
-      "AL2": "ami-032509850cf9ee54e"
+      AL2: ami-0df24e148fdb9f1d8
 
 Resources:
   RDSSubnetGroup:
@@ -355,7 +325,7 @@ Resources:
           - "-pgsql"
       DBSubnetGroupName: !Ref RDSSubnetGroup
       Engine: postgres
-      EngineVersion: 11.14
+      EngineVersion: 12.13
       DBName: ckan_default
       MasterUsername: ckan_dba
       MasterUserPassword: !Ref DBPassword
@@ -367,7 +337,7 @@ Resources:
       PreferredBackupWindow: 14:00-15:00
       PreferredMaintenanceWindow: Sun:15:30-Sun:16:30
       PubliclyAccessible: true
-      StorageType: gp2
+      StorageType: gp3
       VPCSecurityGroups:
         - !Ref AdminSecurityGroup
 
@@ -508,12 +478,12 @@ Resources:
           DeviceName: "/dev/xvda"
           Ebs:
             VolumeSize: !Ref ServicesInstanceRootVolumeSize
-            VolumeType: gp2
+            VolumeType: gp3
         -
           DeviceName: "/dev/xvdf"
           Ebs:
             VolumeSize: !Ref ServicesInstanceDataVolumeSize
-            VolumeType: gp2
+            VolumeType: gp3
             DeleteOnTermination: "false"
       SecurityGroupIds: 
         - !Ref AdminSecurityGroup

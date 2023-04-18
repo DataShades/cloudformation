@@ -10,6 +10,8 @@ This template will create one or more VPCs with subnets and other related compon
 
 *Note: Before using this template, ensure you have created an SSH Key Pair via the EC2 console.*
 
+*Note: If you have already got a security group named "WEB-ACCESS" in the target VPC, use the `no-sec-grp` template.*
+
 This stack template creates the underlying resources you'll need for your CKAN stack. The template will provision a DEV/UAT/PROD stack and name the resources appropriately. If you require multiple stack types, re-use the template and select the appropriate options.
 
 The following resources will be created:
